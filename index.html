@@ -16,8 +16,6 @@
     <hr>
     <section>
       <div class="container">
-        <div>
-
           <!-- Nav tabs -->
           <ul class="nav nav-tabs" role="tablist">
             <!-- <li class="active"><a><input type=radio name=wee value="all" data-bind='checked: typeToShow'/>All</a></li>
@@ -30,10 +28,12 @@
 
           </ul>
           <!-- items -->
-          <div class="well" data-bind='template: { foreach: planetsToShow }'>
-            <div data-bind='attr: { "class": "planet " + type }, text: name'> </div>
-          </div>
-        </div>
+          <section class="well">
+            <input type="text" placeholder="Filter" data-bind="textInput: filterTxt"/>
+            <div data-bind='template: { foreach: planetsToShow }'>
+              <div data-bind='attr: { "class": "planet " + type }, text: name'> </div>
+            </div>
+          </section>
       </div>
     </section>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.2/jquery.min.js" charset="utf-8"></script>
@@ -50,8 +50,9 @@
             {type: "gas", name: "Saturn"},
             {type: "gas", name: "Uranus"},
             {type: "gas", name: "Neptune"},
+            {type: "wut", name: "Pluto"}
         ]);
-
+        this.filterTxt = ko.observable("");
         this.typeToShow = ko.observable("all");
         this.clkr = function(k,e) {
             this.typeToShow(e.target.innerHTML);
@@ -60,11 +61,13 @@
             // Represents a filtered list of planets
             // i.e., only those matching the "typeToShow" condition
             var desiredType = this.typeToShow();
-            if (desiredType == "all"){
-              return this.planets();
-            }
+            var filterOn = this.filterTxt();
+
             return ko.utils.arrayFilter(this.planets(), function(planet) {
-                return planet.type == desiredType;
+              if (desiredType == "all"){
+                return planet.name.indexOf(filterOn) >= 0;
+              }              
+              return planet.type == desiredType && planet.name.indexOf(filterOn) >= 0 ;
             });
         }, this);
 
